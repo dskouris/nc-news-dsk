@@ -1,8 +1,9 @@
+process.env.NODE_ENV = 'test';
 const { expect } = require('chai');
 const {
   formatDates,
   makeRefObj,
-  formatComments,
+  formatComments
 } = require('../db/utils/utils');
 
 describe('formatDates', () => {});
