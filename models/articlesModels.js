@@ -1,7 +1,5 @@
 const knex = require('../connection');
 
-//comments.belongs_to = article.title
-
 exports.fetchArticle = ({ id }) => {
   return knex('articles')
     .select('*')

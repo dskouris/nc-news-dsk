@@ -33,7 +33,7 @@ describe('app', () => {
         });
     });
   });
-  describe.only('/articles/:article_id', () => {
+  describe('/articles/:article_id', () => {
     describe('GET / 200', () => {
       it('returns an article object with an author property', () => {
         return request(app)
@@ -54,7 +54,7 @@ describe('app', () => {
           });
       });
     });
-    describe('PATCH', () => {
+    describe('PATCH / 200', () => {
       it('responds with the article object of a given article_id', () => {
         return request(app)
           .patch('/api/articles/1')
@@ -71,6 +71,19 @@ describe('app', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.article.votes).to.equal(110);
+          });
+      });
+    });
+  });
+  describe.only('/articles/:article_id/comments', () => {
+    describe('POST / 201', () => {
+      it('returns the newly posted comment body', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({ username: 'bigDim18', body: 'what an amazing article' })
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment).to.be.an('object');
           });
       });
     });
