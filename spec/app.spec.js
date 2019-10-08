@@ -54,5 +54,25 @@ describe('app', () => {
           });
       });
     });
+    describe('PATCH', () => {
+      it('responds with the article object of a given article_id', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({ inc_votes: 10 })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.article).to.be.an('object');
+          });
+      });
+      it('updates the amount of votes as specified in the patch request', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({ inc_votes: 10 })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.article.votes).to.equal(110);
+          });
+      });
+    });
   });
 });
