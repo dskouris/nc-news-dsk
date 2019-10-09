@@ -1,6 +1,6 @@
 const knex = require('../connection');
 
-exports.fetchArticle = ({ id }) => {
+exports.fetchArticle = id => {
   return knex('articles')
     .select('*')
     .where({ article_id: id })

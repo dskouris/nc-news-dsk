@@ -12,26 +12,42 @@ describe('app', () => {
   after(() => {
     return connection.destroy();
   });
+  describe('/api', () => {
+    describe('GET / 200', () => {
+      it('ERROR / 404 handles invalid route', () => {
+        return request(app)
+          .get('/api/commmments')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Route not found');
+          });
+      });
+    });
+  });
   describe('/topics', () => {
-    it('GET / 200 returns object containing an array of topics objects', () => {
-      return request(app)
-        .get('/api/topics')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).to.be.an('object');
-          expect(body.topics[0]).to.haveOwnProperty('slug');
-        });
+    describe('GET / 200', () => {
+      it('returns object containing an array of topics objects', () => {
+        return request(app)
+          .get('/api/topics')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body).to.be.an('object');
+            expect(body.topics[0]).to.haveOwnProperty('slug');
+          });
+      });
     });
   });
   describe('/users/:username', () => {
-    it('GET / 200 returns a user object with username, avatar_url and name properties', () => {
-      return request(app)
-        .get('/api/users/butter_bridge')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).to.be.an('object');
-          expect(body.user.username).to.equal('butter_bridge');
-        });
+    describe('GET / 200', () => {
+      it('returns a user object with username, avatar_url and name properties', () => {
+        return request(app)
+          .get('/api/users/butter_bridge')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body).to.be.an('object');
+            expect(body.user.username).to.equal('butter_bridge');
+          });
+      });
     });
   });
   describe('/articles/:article_id', () => {
@@ -52,6 +68,14 @@ describe('app', () => {
           .then(({ body }) => {
             expect(body.article).to.haveOwnProperty('comment_count');
             expect(body.article.comment_count).to.equal(13);
+          });
+      });
+      it('ERROR / 400 when given an invalid article_id', () => {
+        return request(app)
+          .get('/api/articles/dog')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('bad request');
           });
       });
     });
@@ -92,6 +116,15 @@ describe('app', () => {
               'what an amazing article!!!!!!'
             );
             expect(body.new_comment).to.haveOwnProperty('comment_id');
+          });
+      });
+      it('ERROR / 400 when trying to post to column which does not exist', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({ person: 'butter_bridge', body: 'nice article' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('bad request');
           });
       });
     });
@@ -225,8 +258,36 @@ describe('app', () => {
           });
       });
     });
+    describe('ERROR / 405', () => {
+      it('returns method not allowed when attempting delete on this endpoint', () => {
+        return request(app)
+          .delete('/api/articles')
+          .expect(405)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('method not allowed');
+          });
+      });
+      it('returns method not allowed when attempting post on this endpoint', () => {
+        return request(app)
+          .post('/api/articles')
+          .send({ test: 'test' })
+          .expect(405)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('method not allowed');
+          });
+      });
+      it('returns method not allowed when attempting patch on this endpoint', () => {
+        return request(app)
+          .patch('/api/articles')
+          .send({ test: 'test' })
+          .expect(405)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('method not allowed');
+          });
+      });
+    });
   });
-  describe.only('/comments/:comment_id', () => {
+  describe('/comments/:comment_id', () => {
     describe('PATCH / 200', () => {
       it('updates the votes of a comment and returns the updated comment', () => {
         return request(app)

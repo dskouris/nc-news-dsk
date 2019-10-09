@@ -8,8 +8,12 @@ const {
   sendComment,
   getCommentsForArticle
 } = require('../controllers/commentsControllers');
+const { send405 } = require('../errors/index');
 
-articlesRouter.route('/').get(getAllArticles);
+articlesRouter
+  .route('/')
+  .get(getAllArticles)
+  .all(send405);
 
 articlesRouter
   .route('/:id')

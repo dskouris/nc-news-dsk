@@ -3,11 +3,17 @@ const {
   amendArticle,
   fetchAllArticles
 } = require('../models/articlesModels');
+const { send400 } = require('../errors/index');
 
 exports.getArticle = (req, res, next) => {
-  fetchArticle(req.params)
-    .then(article => res.status(200).send(article))
-    .catch(next);
+  const { id } = req.params;
+  if (parseInt(id) >= -1) {
+    fetchArticle(id)
+      .then(article => res.status(200).send(article))
+      .catch(next);
+  } else {
+    next({ status: 400, msg: 'bad request' });
+  }
 };
 
 exports.updateArticle = (req, res, next) => {
