@@ -26,3 +26,15 @@ exports.amendArticle = (id, votes) => {
       return { article: article[0] };
     });
 };
+
+exports.fetchAllArticles = (sortBy = 'created_at', order = 'desc') => {
+  return knex('articles')
+    .select('articles.*')
+    .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+    .groupBy('articles.article_id')
+    .count({ comment_count: 'comments.article_id' })
+    .orderBy(sortBy, order)
+    .then(articles => {
+      return { articles };
+    });
+};

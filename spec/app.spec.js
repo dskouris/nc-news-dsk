@@ -3,6 +3,7 @@ process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const chai = require('chai');
 const { expect } = chai;
+chai.use(require('chai-sorted'));
 const app = require('../app');
 const connection = require('../connection');
 
@@ -75,7 +76,7 @@ describe('app', () => {
       });
     });
   });
-  describe.only('/articles/:article_id/comments', () => {
+  describe('/articles/:article_id/comments', () => {
     describe('POST / 201', () => {
       it('returns the newly posted comment body', () => {
         return request(app)
@@ -91,6 +92,117 @@ describe('app', () => {
               'what an amazing article!!!!!!'
             );
             expect(body.new_comment).to.haveOwnProperty('comment_id');
+          });
+      });
+    });
+    describe('GET / 200', () => {
+      it('returns an object containing an array of comment objects', () => {
+        return request(app)
+          .get('/api/articles/1/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments[0]).to.haveOwnProperty('comment_id');
+          });
+      });
+      it('can handle query for sort_by, defaulted to created_at', () => {
+        return request(app)
+          .get('/api/articles/1/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.sortedBy('created_at', {
+              descending: true
+            });
+          });
+      });
+      it('can handle query for sort_by when specified to author', () => {
+        return request(app)
+          .get('/api/articles/1/comments?sort_by=author')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.sortedBy('author', {
+              descending: true
+            });
+          });
+      });
+      it('sorts comments in descending order by default', () => {
+        return request(app)
+          .get('/api/articles/1/comments?sort_by=author')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.sortedBy('author', {
+              descending: true
+            });
+          });
+      });
+      it('handles query to sort in ascending order', () => {
+        return request(app)
+          .get('/api/articles/1/comments?sort_by=author&order=asc')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.sortedBy('author', {
+              ascending: true
+            });
+          });
+      });
+    });
+  });
+  describe.only('/articles', () => {
+    describe('GET / 200', () => {
+      it('responds with an object containing array of articles', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+          });
+      });
+      it('each article object has a comment_count property', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles[0]).to.haveOwnProperty('comment_count');
+          });
+      });
+      it('can handle query for sort_by, defaulted to created_at', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.sortedBy('created_at', {
+              descending: true
+            });
+          });
+      });
+      it('can handle query for sort_by when specified as article_id', () => {
+        return request(app)
+          .get('/api/articles?sort_by=article_id')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.sortedBy('article_id', {
+              descending: true
+            });
+          });
+      });
+      it('sorts articles in descending order by default', () => {
+        return request(app)
+          .get('/api/articles?sort_by=article_id')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.sortedBy('article_id', {
+              descending: true
+            });
+          });
+      });
+      it('can handle query to sort in ascending order', () => {
+        return request(app)
+          .get('/api/articles?sort_by=article_id&order=asc')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.sortedBy('article_id', {
+              ascending: true
+            });
           });
       });
     });

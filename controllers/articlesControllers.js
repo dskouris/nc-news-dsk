@@ -1,4 +1,8 @@
-const { fetchArticle, amendArticle } = require('../models/articlesModels');
+const {
+  fetchArticle,
+  amendArticle,
+  fetchAllArticles
+} = require('../models/articlesModels');
 
 exports.getArticle = (req, res, next) => {
   fetchArticle(req.params)
@@ -9,7 +13,19 @@ exports.getArticle = (req, res, next) => {
 exports.updateArticle = (req, res, next) => {
   const id = req.params.id;
   const votes = req.body.inc_votes;
-  amendArticle(id, votes).then(updatedArticle => {
-    res.status(200).send(updatedArticle);
-  });
+  amendArticle(id, votes)
+    .then(updatedArticle => {
+      res.status(200).send(updatedArticle);
+    })
+    .catch(next);
+};
+
+exports.getAllArticles = (req, res, next) => {
+  const sorter = req.query.sort_by;
+  const { order } = req.query;
+  fetchAllArticles(sorter, order)
+    .then(articles => {
+      res.status(200).send(articles);
+    })
+    .catch(next);
 };
