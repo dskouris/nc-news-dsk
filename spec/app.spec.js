@@ -80,10 +80,17 @@ describe('app', () => {
       it('returns the newly posted comment body', () => {
         return request(app)
           .post('/api/articles/1/comments')
-          .send({ username: 'bigDim18', body: 'what an amazing article' })
+          .send({
+            username: 'butter_bridge',
+            body: 'what an amazing article!!!!!!'
+          })
           .expect(201)
           .then(({ body }) => {
-            expect(body.comment).to.be.an('object');
+            expect(body.new_comment).to.be.an('object');
+            expect(body.new_comment.body).to.equal(
+              'what an amazing article!!!!!!'
+            );
+            expect(body.new_comment).to.haveOwnProperty('comment_id');
           });
       });
     });
