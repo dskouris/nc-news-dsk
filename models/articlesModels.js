@@ -27,13 +27,22 @@ exports.amendArticle = (id, votes) => {
     });
 };
 
-exports.fetchAllArticles = (sortBy = 'created_at', order = 'desc') => {
+exports.fetchAllArticles = (
+  sortBy = 'created_at',
+  order = 'desc',
+  author,
+  topic
+) => {
   return knex('articles')
     .select('articles.*')
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('articles.article_id')
     .count({ comment_count: 'comments.article_id' })
     .orderBy(sortBy, order)
+    .modify(query => {
+      if (author) query.where({ 'articles.author': author });
+      if (topic) query.where({ 'articles.topic': topic });
+    })
     .then(articles => {
       return { articles };
     });

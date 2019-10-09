@@ -1,14 +1,14 @@
 const {
   postComment,
-  fetchCommentsForArticle
+  fetchCommentsForArticle,
+  modifyComment,
+  deleteComment
 } = require('../models/commentsModels');
 
 exports.sendComment = (req, res, next) => {
   const commentBody = req.body;
   postComment(commentBody)
-    .then(newComment => {
-      res.status(201).send(newComment);
-    })
+    .then(newComment => res.status(201).send(newComment))
     .catch(next);
 };
 
@@ -17,8 +17,21 @@ exports.getCommentsForArticle = (req, res, next) => {
   const { order } = req.query;
   const { id } = req.params;
   fetchCommentsForArticle(id, sorter, order)
-    .then(comments => {
-      res.status(200).send(comments);
-    })
+    .then(comments => res.status(200).send(comments))
+    .catch(next);
+};
+
+exports.updateComment = (req, res, next) => {
+  const { id } = req.params;
+  const { inc_votes } = req.body;
+  modifyComment(id, inc_votes)
+    .then(comment => res.status(200).send(comment))
+    .catch(next);
+};
+
+exports.removeComment = (req, res, next) => {
+  const { id } = req.params;
+  deleteComment(id)
+    .then(res.sendStatus(204))
     .catch(next);
 };

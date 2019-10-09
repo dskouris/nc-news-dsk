@@ -14,18 +14,14 @@ exports.updateArticle = (req, res, next) => {
   const id = req.params.id;
   const votes = req.body.inc_votes;
   amendArticle(id, votes)
-    .then(updatedArticle => {
-      res.status(200).send(updatedArticle);
-    })
+    .then(updatedArticle => res.status(200).send(updatedArticle))
     .catch(next);
 };
 
 exports.getAllArticles = (req, res, next) => {
   const sorter = req.query.sort_by;
-  const { order } = req.query;
-  fetchAllArticles(sorter, order)
-    .then(articles => {
-      res.status(200).send(articles);
-    })
+  const { order, author, topic } = req.query;
+  fetchAllArticles(sorter, order, author, topic)
+    .then(articles => res.status(200).send(articles))
     .catch(next);
 };

@@ -25,3 +25,19 @@ exports.fetchCommentsForArticle = (
       return { comments };
     });
 };
+
+exports.modifyComment = (id, votes) => {
+  return knex('comments')
+    .where({ comment_id: id })
+    .increment('votes', votes)
+    .returning('*')
+    .then(comment => {
+      return { comment: comment[0] };
+    });
+};
+
+exports.deleteComment = id => {
+  return knex('comments')
+    .where({ comment_id: id })
+    .del();
+};

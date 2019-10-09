@@ -147,7 +147,7 @@ describe('app', () => {
       });
     });
   });
-  describe.only('/articles', () => {
+  describe('/articles', () => {
     describe('GET / 200', () => {
       it('responds with an object containing array of articles', () => {
         return request(app)
@@ -204,6 +204,45 @@ describe('app', () => {
               ascending: true
             });
           });
+      });
+      it('can handle an author query to filter articles by author', () => {
+        return request(app)
+          .get('/api/articles?author=butter_bridge')
+          .expect(200)
+          .then(({ body }) => {
+            expect(
+              body.articles.every(article => article.author === 'butter_bridge')
+            ).to.be.true;
+          });
+      });
+      it('can handle a topic query to filter articles by topic', () => {
+        return request(app)
+          .get('/api/articles?topic=cats')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles.every(article => article.topic === 'cats')).to
+              .be.true;
+          });
+      });
+    });
+  });
+  describe.only('/comments/:comment_id', () => {
+    describe('PATCH / 200', () => {
+      it('updates the votes of a comment and returns the updated comment', () => {
+        return request(app)
+          .patch('/api/comments/1')
+          .send({ inc_votes: 20 })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comment.votes).to.equal(36);
+          });
+      });
+    });
+    describe('DELETE / 204', () => {
+      it('deletes a comment of the given comment_id', () => {
+        return request(app)
+          .delete('/api/comments/1')
+          .expect(204);
       });
     });
   });
