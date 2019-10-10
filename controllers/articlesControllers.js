@@ -17,11 +17,21 @@ exports.getArticle = (req, res, next) => {
 };
 
 exports.updateArticle = (req, res, next) => {
-  const id = req.params.id;
-  const votes = req.body.inc_votes;
-  amendArticle(id, votes)
-    .then(updatedArticle => res.status(200).send(updatedArticle))
-    .catch(next);
+  if (
+    req.body.hasOwnProperty('inc_votes') &&
+    Object.keys(req.body).length === 1
+  ) {
+    const id = req.params.id;
+    const votes = req.body.inc_votes;
+    if (!votes || typeof votes !== 'number') {
+      next({ status: 400, msg: 'bad request' });
+    }
+    amendArticle(id, votes)
+      .then(updatedArticle => res.status(200).send(updatedArticle))
+      .catch(next);
+  } else {
+    next({ status: 400, msg: 'bad request' });
+  }
 };
 
 exports.getAllArticles = (req, res, next) => {

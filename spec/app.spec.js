@@ -78,8 +78,16 @@ describe('app', () => {
             expect(body.msg).to.equal('bad request');
           });
       });
+      it('ERROR / 404 when given a valid article_id which does not exist on database', () => {
+        return request(app)
+          .get('/api/articles/9999')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('no article found with id: 9999');
+          });
+      });
     });
-    describe('PATCH / 200', () => {
+    describe.only('PATCH / 200', () => {
       it('responds with the article object of a given article_id', () => {
         return request(app)
           .patch('/api/articles/1')
@@ -96,6 +104,33 @@ describe('app', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.article.votes).to.equal(110);
+          });
+      });
+      it('ERROR / 400 when given a request body without inc_votes', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({ body: 'hello' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('bad request');
+          });
+      });
+      it('ERROR / 400 when inc_votes is not a number', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({ inc_votes: 'cheese' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('bad request');
+          });
+      });
+      it('ERROR / 400 when request body has other properties than inc_votes', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({ inc_votes: 10, body: 'ham' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('bad request');
           });
       });
     });

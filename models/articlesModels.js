@@ -6,6 +6,12 @@ exports.fetchArticle = id => {
     .where({ article_id: id })
     .then(article => {
       article = { article: article[0] };
+      if (article.article === undefined) {
+        return Promise.reject({
+          status: 404,
+          msg: `no article found with id: ${id}`
+        });
+      }
       let commentsQuery = knex('comments')
         .select('*')
         .where({ article_id: article.article.article_id });
