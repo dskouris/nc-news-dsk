@@ -87,7 +87,7 @@ describe('app', () => {
           });
       });
     });
-    describe.only('PATCH / 200', () => {
+    describe('PATCH / 200', () => {
       it('responds with the article object of a given article_id', () => {
         return request(app)
           .patch('/api/articles/1')
@@ -216,7 +216,7 @@ describe('app', () => {
     });
   });
   describe('/articles', () => {
-    describe('GET / 200', () => {
+    describe.only('GET / 200', () => {
       it('responds with an object containing array of articles', () => {
         return request(app)
           .get('/api/articles')
@@ -290,6 +290,40 @@ describe('app', () => {
           .then(({ body }) => {
             expect(body.articles.every(article => article.topic === 'cats')).to
               .be.true;
+          });
+      });
+      it('ERROR / 400 when given a sort_by query for nonexistent column', () => {
+        return request(app)
+          .get('/api/articles?sort_by=bad_column')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('bad request');
+          });
+      });
+      it('ERROR orders by default (descending) when given an order query that is not asc or desc', () => {
+        return request(app)
+          .get('/api/articles?sort_by=article_id&order=bad')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.sortedBy('article_id', {
+              descending: true
+            });
+          });
+      });
+      it('ERROR / 404 throws 404 when querying topic / author not in db', () => {
+        return request(app)
+          .get('/api/articles?topic=lemondrizzlecake')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('not found');
+          });
+      });
+      it('ERROR / 404 when querying valid author with no results', () => {
+        return request(app)
+          .get('/api/articles?author=lurker')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('not found');
           });
       });
     });

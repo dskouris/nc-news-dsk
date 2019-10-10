@@ -36,7 +36,10 @@ exports.updateArticle = (req, res, next) => {
 
 exports.getAllArticles = (req, res, next) => {
   const sorter = req.query.sort_by;
-  const { order, author, topic } = req.query;
+  let { order, author, topic } = req.query;
+  if (order !== 'asc') {
+    order = 'desc';
+  }
   fetchAllArticles(sorter, order, author, topic)
     .then(articles => res.status(200).send(articles))
     .catch(next);

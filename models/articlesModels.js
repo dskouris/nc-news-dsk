@@ -1,4 +1,5 @@
 const knex = require('../connection');
+const { fetchUser } = require('./usersModels');
 
 exports.fetchArticle = id => {
   return knex('articles')
@@ -50,6 +51,10 @@ exports.fetchAllArticles = (
       if (topic) query.where({ 'articles.topic': topic });
     })
     .then(articles => {
-      return { articles };
+      if (articles.length) {
+        return { articles };
+      } else {
+        return Promise.reject({ status: 404, msg: 'not found' });
+      }
     });
 };
