@@ -13,6 +13,16 @@ describe('app', () => {
     return connection.destroy();
   });
   describe('/api', () => {
+    // describe.only('GET / 200', () => {
+    //   it('returns an object', () => {
+    //     return request(app)
+    //       .get('/api')
+    //       .expect(200)
+    //       .then(({ body }) => {
+    //         expect(body.api).to.be.an('object');
+    //       });
+    //   });
+    // });
     describe('GET / 200', () => {
       it('ERROR / 404 handles invalid route', () => {
         return request(app)
