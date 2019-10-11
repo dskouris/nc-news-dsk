@@ -4,7 +4,7 @@
   "description": "bc-nc-news",
   "main": "index.js",
   "scripts": {
-    "start": "node listen.js",
+    "start": "node server.js",
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "knex seed:run",
     "test-utils": "mocha spec/utils.spec.js",
