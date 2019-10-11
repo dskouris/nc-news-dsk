@@ -18,11 +18,13 @@ articlesRouter
 articlesRouter
   .route('/:id')
   .get(getArticle)
-  .patch(updateArticle);
+  .patch(updateArticle)
+  .all(send405);
 
 articlesRouter
   .route('/:id/comments')
   .post(sendComment)
-  .get(getCommentsForArticle);
+  .get(getCommentsForArticle)
+  .all(send405);
 
 module.exports = articlesRouter;

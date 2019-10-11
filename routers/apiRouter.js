@@ -3,10 +3,9 @@ const topicsRouter = require('./topicsRouter');
 const usersRouter = require('./usersRouter');
 const articlesRouter = require('./articlesRouter');
 const commentsRouter = require('./commentsRouter');
+const { send405 } = require('../errors/index');
 
-// apiRouter.route('/').get(() => {
-//   console.log('in apiroute get');
-// });
+apiRouter.route('/').all(send405);
 apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/articles', articlesRouter);

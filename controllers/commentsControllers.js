@@ -32,6 +32,10 @@ exports.updateComment = (req, res, next) => {
 exports.removeComment = (req, res, next) => {
   const { id } = req.params;
   deleteComment(id)
-    .then(res.sendStatus(204))
+    .then(deleteCount => {
+      return deleteCount > 0
+        ? res.sendStatus(204)
+        : res.status(404).send({ msg: 'Comment not found' });
+    })
     .catch(next);
 };

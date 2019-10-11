@@ -58,6 +58,14 @@ describe('app', () => {
             expect(body.user.username).to.equal('butter_bridge');
           });
       });
+      it('ERROR / 404 returns a 404 when given a non-existent username', () => {
+        return request(app)
+          .get('/api/users/hello')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('User not found');
+          });
+      });
     });
   });
   describe('/articles/:article_id', () => {
@@ -378,11 +386,19 @@ describe('app', () => {
           });
       });
     });
-    describe('DELETE / 204', () => {
+    describe.only('DELETE / 204', () => {
       it('deletes a comment of the given comment_id', () => {
         return request(app)
           .delete('/api/comments/1')
           .expect(204);
+      });
+      it('ERROR / 404  returns when given a comment_id which does not exist', () => {
+        return request(app)
+          .delete('/api/comments/9999')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Comment not found');
+          });
       });
     });
   });
