@@ -13,16 +13,24 @@ describe('app', () => {
     return connection.destroy();
   });
   describe('/api', () => {
-    // describe.only('GET / 200', () => {
-    //   it('returns an object', () => {
-    //     return request(app)
-    //       .get('/api')
-    //       .expect(200)
-    //       .then(({ body }) => {
-    //         expect(body.api).to.be.an('object');
-    //       });
-    //   });
-    // });
+    describe.only('GET / 200', () => {
+      it('returns an object', () => {
+        return request(app)
+          .get('/api')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body).to.be.an('object');
+          });
+      });
+      it('describes the different endpoints available on the api', () => {
+        return request(app)
+          .get('/api')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body).to.haveOwnProperty('GET /api/topics');
+          });
+      });
+    });
     describe('GET / 200', () => {
       it('ERROR / 404 handles invalid route', () => {
         return request(app)
@@ -385,8 +393,26 @@ describe('app', () => {
             expect(body.comment.votes).to.equal(36);
           });
       });
+      it('ERROR / 400 returns when sent an invalid inc_votes value', () => {
+        return request(app)
+          .patch('/api/comments/1')
+          .send({ inc_votes: 'rubbish' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Bad request');
+          });
+      });
+      it('ERROR / 400 returns when given an invalid comment_id', () => {
+        return request(app)
+          .patch('/api/comments/badID')
+          .send({ inc_votes: 1 })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Bad request');
+          });
+      });
     });
-    describe.only('DELETE / 204', () => {
+    describe('DELETE / 204', () => {
       it('deletes a comment of the given comment_id', () => {
         return request(app)
           .delete('/api/comments/1')

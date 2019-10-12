@@ -23,5 +23,100 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article object for the given article_id",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Running a Node App",
+        "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+        "votes": 0,
+        "topic": "coding",
+        "author": "jessjelly",
+        "created_at": "2016-08-18T12:07:52.389Z",
+        "comment_count": 8
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "​request body accepts an object in the form { inc_votes: newVote }, where newVote is the amount to increment votes property by",
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Running a Node App",
+        "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+        "votes": 1,
+        "topic": "coding",
+        "author": "jessjelly",
+        "created_at": "2016-08-18T12:07:52.389Z",
+        "comment_count": 8
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all comments for the given article",
+    "queries": ["sort_by", "order"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 55,
+          "author": "jessjelly",
+          "article_id": 6,
+          "votes": -3,
+          "created_at": "2017-12-26T22:59:45.392Z",
+          "body": "Ut et libero reiciendis. Tenetur quibusdam veniam in atque corrupti excepturi tenetur qui et. Qui ut autem minus aut explicabo in cumque dolorum. Voluptatem est perferendis velit. Eaque doloremque asperiores error."
+        },
+        {
+          "comment_id": 182,
+          "author": "jessjelly",
+          "article_id": 6,
+          "votes": -5,
+          "created_at": "2017-12-14T16:22:40.842Z",
+          "body": "Voluptatem voluptas tempore soluta et rerum quia sed quas ut. Non cumque perferendis voluptate vitae est quis sit enim dolor. Et esse qui est et."
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "request body accepts an object with username and body property, returns the posted comment",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 55,
+        "author": "jessjelly",
+        "article_id": 6,
+        "votes": -3,
+        "created_at": "2017-12-26T22:59:45.392Z",
+        "body": "Ut et libero reiciendis. Tenetur quibusdam veniam in atque corrupti excepturi tenetur qui et. Qui ut autem minus aut explicabo in cumque dolorum. Voluptatem est perferendis velit. Eaque doloremque asperiores error."
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes given comment by comment_id and returns 204 status"
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "​request body accepts an object in the form { inc_votes: newVote }, where newVote is the amount to increment votes property by",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 55,
+        "author": "jessjelly",
+        "article_id": 6,
+        "votes": -1,
+        "created_at": "2017-12-26T22:59:45.392Z",
+        "body": "Ut et libero reiciendis. Tenetur quibusdam veniam in atque corrupti excepturi tenetur qui et. Qui ut autem minus aut explicabo in cumque dolorum. Voluptatem est perferendis velit. Eaque doloremque asperiores error."
+      }
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves up a user object according to username",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "cooljmessy",
+        "avatar_url": "https://i.imgur.com/WfX0Neu.jpg",
+        "name": "Peter Messy"
+      }
+    }
   }
 }

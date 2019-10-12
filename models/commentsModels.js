@@ -27,17 +27,27 @@ exports.fetchCommentsForArticle = (
 };
 
 exports.modifyComment = (id, votes) => {
-  return knex('comments')
-    .where({ comment_id: id })
-    .increment('votes', votes)
-    .returning('*')
-    .then(comment => {
-      return { comment: comment[0] };
-    });
+  if (typeof votes !== 'number') {
+    return Promise.reject({ status: 400, msg: 'Bad request' });
+  } else {
+    return knex('comments')
+      .where({ comment_id: id })
+      .increment('votes', votes)
+      .returning('*')
+      .then(comment => {
+        return { comment: comment[0] };
+      });
+  }
 };
 
 exports.deleteComment = id => {
   return knex('comments')
     .where({ comment_id: id })
     .del();
+};
+
+exports.checkIfCommentExists = id => {
+  return knex('comments')
+    .select('*')
+    .where({ comment_id: id });
 };
