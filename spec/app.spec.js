@@ -13,7 +13,7 @@ describe('app', () => {
     return connection.destroy();
   });
   describe('/api', () => {
-    describe.only('GET / 200', () => {
+    describe('GET / 200', () => {
       it('returns an object', () => {
         return request(app)
           .get('/api')
@@ -93,7 +93,7 @@ describe('app', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.article).to.haveOwnProperty('comment_count');
-            expect(body.article.comment_count).to.equal(13);
+            expect(body.article.comment_count).to.equal('13');
           });
       });
       it('ERROR / 400 when given an invalid article_id', () => {
@@ -167,16 +167,14 @@ describe('app', () => {
         return request(app)
           .post('/api/articles/1/comments')
           .send({
-            username: 'butter_bridge',
-            body: 'what an amazing article!!!!!!'
+            "username": 'butter_bridge',
+            "body": 'what an amazing article!!!!!!'
           })
           .expect(201)
           .then(({ body }) => {
-            expect(body.new_comment).to.be.an('object');
-            expect(body.new_comment.body).to.equal(
-              'what an amazing article!!!!!!'
-            );
-            expect(body.new_comment).to.haveOwnProperty('comment_id');
+            expect(body.comment).to.be.an('object');
+            expect(body.comment.body).to.equal('what an amazing article!!!!!!');
+            expect(body.comment).to.haveOwnProperty('comment_id');
           });
       });
       it('ERROR / 400 when trying to post to column which does not exist', () => {
@@ -339,14 +337,6 @@ describe('app', () => {
       it('ERROR / 404 throws 404 when querying topic / author not in db', () => {
         return request(app)
           .get('/api/articles?topic=lemondrizzlecake')
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).to.equal('not found');
-          });
-      });
-      it('ERROR / 404 when querying valid author with no results', () => {
-        return request(app)
-          .get('/api/articles?author=lurker')
           .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.equal('not found');

@@ -8,7 +8,7 @@ exports.postComment = comment => {
     .into('comments')
     .returning('*')
     .then(postedComment => {
-      return { new_comment: postedComment[0] };
+      return { comment: postedComment[0] };
     });
 };
 
@@ -27,12 +27,12 @@ exports.fetchCommentsForArticle = (
 };
 
 exports.modifyComment = (id, votes) => {
-  if (typeof votes !== 'number') {
+  if (typeof votes !== 'number' || isNaN(parseInt(id))) {
     return Promise.reject({ status: 400, msg: 'Bad request' });
   } else {
     return knex('comments')
       .where({ comment_id: id })
-      .increment('votes', votes)
+      .increment('votes', votes || 0)
       .returning('*')
       .then(comment => {
         return { comment: comment[0] };

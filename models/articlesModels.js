@@ -19,7 +19,7 @@ exports.fetchArticle = id => {
       return Promise.all([article, commentsQuery]);
     })
     .then(([article, comments]) => {
-      article.article.comment_count = comments.length;
+      article.article.comment_count = comments.length.toString();
       return article;
     });
 };
