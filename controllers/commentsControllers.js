@@ -7,6 +7,8 @@ const {
 
 exports.sendComment = (req, res, next) => {
   const commentBody = req.body;
+  const { id } = req.params;
+  commentBody.article_id = id;
   postComment(commentBody)
     .then(newComment => res.status(201).send(newComment))
     .catch(next);
